@@ -35,6 +35,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.databind.util.JSONPObject;
+
 /**
  *
  * @author hcadavid
@@ -47,17 +49,18 @@ public class OrdersAPIController {
 
     private BasicBillCalculator calculator;
 
-    @RequestMapping("/orders")
-
-    public Map<Order,Integer> getOrdersAndTotals(@RequestBody String a){
+    @RequestMapping(value = "/orders", method = RequestMethod.GET)
+    public ResponseEntity<?> getOrdersAndTotals(){
         Map products = new ConcurrentHashMap<Order,Integer>();
         Map<String, RestaurantProduct> productMaps = service.getProductsMap();
         Map<Integer, Order> tableOrders = service.getTableOrders();
+        System.out.println(productMaps);
         for(Integer i:tableOrders.keySet()){
+            System.out.println(i);
             int total = calculator.calculateBill(tableOrders.get(i),productMaps);
             products.put(tableOrders.get(i),total);
             }
-        return products;
+        return new ResponseEntity<>(products,HttpStatus.ACCEPTED);
     }
 
     
