@@ -84,7 +84,12 @@ public class RestaurantOrderServicesStub implements RestaurantOrderServices {
 
     private static final Map<Integer, Order> tableOrders;
     
-
+    public Map<String, RestaurantProduct> getProductsMap(){
+        return this.productsMap;
+    }
+    public Map<Integer, Order> getTableOrders(){
+        return this.tableOrders;
+    }
     static {
         productsMap = new ConcurrentHashMap<>();
         tableOrders = new ConcurrentHashMap<>();        

@@ -16,13 +16,18 @@
  */
 package edu.eci.arsw.myrestaurant.restcontrollers;
 
+import edu.eci.arsw.myrestaurant.beans.impl.BasicBillCalculator;
 import edu.eci.arsw.myrestaurant.model.Order;
 import edu.eci.arsw.myrestaurant.model.ProductType;
 import edu.eci.arsw.myrestaurant.model.RestaurantProduct;
 import edu.eci.arsw.myrestaurant.services.RestaurantOrderServicesStub;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -34,7 +39,26 @@ import org.springframework.web.bind.annotation.RestController;
  *
  * @author hcadavid
  */
+@RestController
 public class OrdersAPIController {
+
+    @Autowired
+    private RestaurantOrderServicesStub service;
+
+    private BasicBillCalculator calculator;
+
+    @RequestMapping("/orders")
+
+    public Map<Order,Integer> getOrdersAndTotals(@RequestBody String a){
+        Map products = new ConcurrentHashMap<Order,Integer>();
+        Map<String, RestaurantProduct> productMaps = service.getProductsMap();
+        Map<Integer, Order> tableOrders = service.getTableOrders();
+        for(Integer i:tableOrders.keySet()){
+            int total = calculator.calculateBill(tableOrders.get(i),productMaps);
+            products.put(tableOrders.get(i),total);
+            }
+        return products;
+    }
 
     
 }
